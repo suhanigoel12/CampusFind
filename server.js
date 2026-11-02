@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -20,8 +21,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Root welcome route
-app.get('/', (req, res) => {
+// Serve static frontend UI
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Root documentation / API Info route (if requested as JSON)
+app.get('/api/docs', (req, res) => {
   const dbStatus = mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected / Pending';
 
   res.status(200).json({
@@ -90,8 +94,8 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => {
   console.log(`\n=============================================================`);
   console.log(` 🚀 CampusFind Server running on port ${PORT}`);
+  console.log(` 🌐 Web UI:       http://localhost:${PORT}/`);
   console.log(` 🌐 Health Check: http://localhost:${PORT}/api/health`);
-  console.log(` 📖 API Info:     http://localhost:${PORT}/`);
   console.log(`=============================================================\n`);
 });
 

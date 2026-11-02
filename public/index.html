@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusFind - Campus Lost & Found System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #eef2ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8fafc;
+      color: var(--gray-800);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .logo span { color: var(--gray-900); }
+    .status-pills {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .pill {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .pill-green {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .pill-green .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 24px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-lg);
+    }
+    .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .hero p { opacity: 0.9; max-width: 600px; font-size: 1.05rem; }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray-600);
+      padding: 12px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--primary); }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Search & Filter Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: white;
+      padding: 16px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+      padding: 10px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); }
+    .select-filter {
+      padding: 10px 16px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      background: white;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Cards Grid */
+    .items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .item-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .type-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .type-lost { background: #fee2e2; color: #b91c1c; }
+    .type-found { background: #dbeafe; color: #1d4ed8; }
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    .status-open { background: #fef3c7; color: #b45309; }
+    .status-resolved { background: #d1fae5; color: #047857; }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.45;
+    }
+    .card-meta {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      background: var(--gray-50);
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card-meta strong { color: var(--gray-800); }
+    .btn-resolve {
+      margin-top: auto;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-resolve:hover { background: var(--primary-dark); }
+    .btn-resolve:disabled {
+      background: var(--gray-200);
+      color: var(--gray-600);
+      cursor: not-allowed;
+    }
+
+    /* Forms */
+    .form-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 32px;
+      box-shadow: var(--shadow);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .form-control:focus { border-color: var(--primary); }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .btn-submit {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--primary-dark); }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: var(--radius);
+      color: var(--gray-600);
+    }
+    .empty-state h3 { font-size: 1.25rem; color: var(--gray-800); margin-bottom: 6px; }
+
+    /* Alert */
+    .alert {
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 0.92rem;
+      display: none;
+    }
+    .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+    .alert-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+    /* API Docs Table */
+    .api-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .api-table th, .api-table td {
+      padding: 14px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-200);
+      font-size: 0.9rem;
+    }
+    .api-table th { background: var(--gray-50); font-weight: 700; color: var(--gray-800); }
+    .method-get { color: #0284c7; font-weight: 700; }
+    .method-post { color: #16a34a; font-weight: 700; }
+    .method-put { color: #d97706; font-weight: 700; }
+    .method-delete { color: #dc2626; font-weight: 700; }
+    .method-patch { color: #7c3aed; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <a href="#" class="logo">
+        🎓 CampusFind <span>Backend</span>
+      </a>
+      <div class="status-pills">
+        <div class="pill pill-green">
+          <div class="dot"></div>
+          <span>Server: Running (Port 5000)</span>
+        </div>
+        <div class="pill pill-green">
+          <div class="dot"></div>
+          <span id="dbStatus">MongoDB: Connected</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="hero">
+      <h1>Campus Lost & Found System</h1>
+      <p>A full Express.js & MongoDB Atlas backend for reporting, tracking, and recovering lost belongings on campus.</p>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('feed')">🔍 Browse Items</button>
+      <button class="tab-btn" onclick="switchTab('report')">➕ Report Item</button>
+      <button class="tab-btn" onclick="switchTab('auth')">👤 Student Login & Token</button>
+      <button class="tab-btn" onclick="switchTab('docs')">📖 API Endpoints & Docs</button>
+    </div>
+
+    <!-- TAB 1: BROWSE ITEMS -->
+    <div id="tab-feed" class="tab-content active">
+      <div class="filter-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by title, description, or location..." onkeyup="handleSearch()">
+        <select id="typeFilter" class="select-filter" onchange="fetchItems()">
+          <option value="">All Types</option>
+          <option value="lost">Lost Items</option>
+          <option value="found">Found Items</option>
+        </select>
+        <select id="categoryFilter" class="select-filter" onchange="fetchItems()">
+          <option value="">All Categories</option>
+          <option value="Electronics">Electronics</option>
+          <option value="Books & Stationery">Books & Stationery</option>
+          <option value="Clothing & Accessories">Clothing & Accessories</option>
+          <option value="Cards & IDs">Cards & IDs</option>
+          <option value="Keys">Keys</option>
+          <option value="Bags & Wallets">Bags & Wallets</option>
+          <option value="Other">Other</option>
+        </select>
+        <select id="statusFilter" class="select-filter" onchange="fetchItems()">
+          <option value="">All Statuses</option>
+          <option value="open">Open</option>
+          <option value="resolved">Resolved</option>
+        </select>
+      </div>
+
+      <div id="itemsContainer" class="items-grid">
+        <!-- Cards loaded dynamically -->
+      </div>
+    </div>
+
+    <!-- TAB 2: REPORT ITEM -->
+    <div id="tab-report" class="tab-content">
+      <div class="form-card">
+        <h2 style="margin-bottom: 20px; font-weight: 800;">Report a Lost or Found Item</h2>
+        <div id="reportAlert" class="alert"></div>
+        <form id="reportForm" onsubmit="handleReport(event)">
+          <div class="form-group">
+            <label class="form-label">Item Title *</label>
+            <input type="text" id="itemTitle" class="form-control" placeholder="e.g. HP Pavilion Laptop / Student ID Card" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Report Type *</label>
+              <select id="itemType" class="form-control" required>
+                <option value="lost">I Lost This Item</option>
+                <option value="found">I Found This Item</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Category *</label>
+              <select id="itemCategory" class="form-control" required>
+                <option value="Electronics">Electronics</option>
+                <option value="Books & Stationery">Books & Stationery</option>
+                <option value="Cards & IDs">Cards & IDs</option>
+                <option value="Clothing & Accessories">Clothing & Accessories</option>
+                <option value="Keys">Keys</option>
+                <option value="Bags & Wallets">Bags & Wallets</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Campus Location *</label>
+            <input type="text" id="itemLocation" class="form-control" placeholder="e.g. Main Library 2nd Floor / Cafeteria" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description *</label>
+            <textarea id="itemDesc" class="form-control" rows="3" placeholder="Provide identifying details..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Information *</label>
+            <input type="text" id="itemContact" class="form-control" placeholder="Phone or email to reach you" required>
+          </div>
+          <button type="submit" class="btn-submit">Submit Report to Database</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- TAB 3: AUTH -->
+    <div id="tab-auth" class="tab-content">
+      <div class="form-card">
+        <h2 style="margin-bottom: 20px; font-weight: 800;">Student Login & Token</h2>
+        <div id="authAlert" class="alert"></div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label class="form-label">Campus Email</label>
+            <input type="email" id="loginEmail" class="form-control" value="test.student@campus.edu" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" value="password123" required>
+          </div>
+          <button type="submit" class="btn-submit">Login & Generate JWT Token</button>
+        </form>
+
+        <div style="margin-top: 24px; padding: 16px; background: var(--gray-50); border-radius: 8px;">
+          <strong style="font-size: 0.85rem; color: var(--gray-600); display: block; margin-bottom: 6px;">CURRENT ACTIVE JWT TOKEN:</strong>
+          <code id="tokenDisplay" style="font-size: 0.75rem; word-break: break-all; color: var(--primary);">No token saved yet. Click login above to generate one.</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: API DOCS -->
+    <div id="tab-docs" class="tab-content">
+      <h2 style="margin-bottom: 16px; font-weight: 800;">API Endpoints Reference</h2>
+      <table class="api-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Access</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method-get">GET</span></td>
+            <td><code>/api/health</code></td>
+            <td>Public</td>
+            <td>Server uptime & MongoDB connection status</td>
+          </tr>
+          <tr>
+            <td><span class="method-post">POST</span></td>
+            <td><code>/api/auth/register</code></td>
+            <td>Public</td>
+            <td>Register student with bcrypt hashed password</td>
+          </tr>
+          <tr>
+            <td><span class="method-post">POST</span></td>
+            <td><code>/api/auth/login</code></td>
+            <td>Public</td>
+            <td>Login student & receive signed JWT</td>
+          </tr>
+          <tr>
+            <td><span class="method-get">GET</span></td>
+            <td><code>/api/items</code></td>
+            <td>Public</td>
+            <td>Browse all lost & found reports (supports search & filters)</td>
+          </tr>
+          <tr>
+            <td><span class="method-post">POST</span></td>
+            <td><code>/api/items</code></td>
+            <td>Protected</td>
+            <td>Create a new lost/found item report</td>
+          </tr>
+          <tr>
+            <td><span class="method-put">PUT</span></td>
+            <td><code>/api/items/:id</code></td>
+            <td>Protected</td>
+            <td>Update report details (title, location, desc)</td>
+          </tr>
+          <tr>
+            <td><span class="method-patch">PATCH</span></td>
+            <td><code>/api/items/:id/resolve</code></td>
+            <td>Protected</td>
+            <td>Mark item as resolved when safely returned</td>
+          </tr>
+          <tr>
+            <td><span class="method-delete">DELETE</span></td>
+            <td><code>/api/items/:id</code></td>
+            <td>Protected</td>
+            <td>Delete item report</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    let authToken = localStorage.getItem('campusfind_token') || '';
+
+    if (authToken) {
+      document.getElementById('tokenDisplay').innerText = authToken;
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabName).classList.add('active');
+
+      if (tabName === 'feed') {
+        fetchItems();
+      }
+    }
+
+    async function fetchItems() {
+      const type = document.getElementById('typeFilter').value;
+      const category = document.getElementById('categoryFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      const search = document.getElementById('searchInput').value;
+
+      let url = '/api/items?';
+      if (type) url += `type=${type}&`;
+      if (category) url += `category=${encodeURIComponent(category)}&`;
+      if (status) url += `status=${status}&`;
+      if (search) url += `search=${encodeURIComponent(search)}&`;
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const container = document.getElementById('itemsContainer');
+
+        if (!data.data || data.data.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <h3>No items found</h3>
+              <p>Try clearing filters or click "Report Item" to add a new one.</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = data.data.map(item => `
+          <div class="item-card">
+            <div class="card-top">
+              <span class="type-badge ${item.type === 'lost' ? 'type-lost' : 'type-found'}">${item.type}</span>
+              <span class="status-badge ${item.itemStatus === 'resolved' ? 'status-resolved' : 'status-open'}">
+                ${item.itemStatus === 'resolved' ? '✔ Resolved' : '● Open'}
+              </span>
+            </div>
+            <h3 class="card-title">${escapeHtml(item.title)}</h3>
+            <p class="card-desc">${escapeHtml(item.description)}</p>
+            <div class="card-meta">
+              <div><strong>📍 Location:</strong> ${escapeHtml(item.location)}</div>
+              <div><strong>📁 Category:</strong> ${escapeHtml(item.category)}</div>
+              <div><strong>📞 Contact:</strong> ${escapeHtml(item.contactInfo)}</div>
+            </div>
+            ${item.itemStatus !== 'resolved' ? `
+              <button class="btn-resolve" onclick="resolveItem('${item._id}')">Mark as Returned / Resolved</button>
+            ` : `
+              <button class="btn-resolve" disabled>Safely Returned</button>
+            `}
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    let searchTimeout;
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(fetchItems, 300);
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const alert = document.getElementById('authAlert');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          authToken = data.token;
+          localStorage.setItem('campusfind_token', authToken);
+          document.getElementById('tokenDisplay').innerText = authToken;
+          alert.className = 'alert alert-success';
+          alert.innerText = 'Login successful! Token saved for authorized actions.';
+          alert.style.display = 'block';
+        } else {
+          alert.className = 'alert alert-error';
+          alert.innerText = data.message || 'Login failed';
+          alert.style.display = 'block';
+        }
+      } catch (err) {
+        alert.className = 'alert alert-error';
+        alert.innerText = 'Error connecting to backend';
+        alert.style.display = 'block';
+      }
+    }
+
+    async function handleReport(e) {
+      e.preventDefault();
+      const alert = document.getElementById('reportAlert');
+
+      // Auto login if no token
+      if (!authToken) {
+        const loginRes = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'test.student@campus.edu', password: 'password123' })
+        });
+        const loginData = await loginRes.json();
+        if (loginData.token) {
+          authToken = loginData.token;
+          localStorage.setItem('campusfind_token', authToken);
+        }
+      }
+
+      const payload = {
+        title: document.getElementById('itemTitle').value,
+        type: document.getElementById('itemType').value,
+        category: document.getElementById('itemCategory').value,
+        location: document.getElementById('itemLocation').value,
+        description: document.getElementById('itemDesc').value,
+        contactInfo: document.getElementById('itemContact').value
+      };
+
+      try {
+        const res = await fetch('/api/items', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          alert.className = 'alert alert-success';
+          alert.innerText = 'Item successfully reported to MongoDB Atlas!';
+          alert.style.display = 'block';
+          document.getElementById('reportForm').reset();
+          setTimeout(() => switchTab('feed'), 1200);
+        } else {
+          alert.className = 'alert alert-error';
+          alert.innerText = data.message || 'Error submitting report';
+          alert.style.display = 'block';
+        }
+      } catch (err) {
+        alert.className = 'alert alert-error';
+        alert.innerText = 'Network error: could not submit report';
+        alert.style.display = 'block';
+      }
+    }
+
+    async function resolveItem(id) {
+      if (!authToken) {
+        alert('Please log in first from the "Student Login & Token" tab');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/items/${id}/resolve`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + authToken
+          },
+          body: JSON.stringify({ status: 'resolved', resolutionNotes: 'Marked resolved via Web UI' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchItems();
+        } else {
+          alert(data.message || 'Could not resolve item');
+        }
+      } catch (err) {
+        alert('Network error while resolving item');
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Initial load
+    fetchItems();
+  </script>
+</body>
+</html>

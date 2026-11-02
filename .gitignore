@@ -1,6 +1,7 @@
 node_modules/
 .env
 .postman/
+*.zip
 .DS_Store
 *.log
 npm-debug.log*

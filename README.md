@@ -1,4 +1,4 @@
-# 🎓 CampusFind - Campus Lost & Found System (Backend API)
+#  CampusFind - Campus Lost & Found System (Backend API)
 
 [![Node.js](https://img.shields.io/badge/Node.js-v20+-green.svg)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-v5.3.0-blue.svg)](https://expressjs.com/)

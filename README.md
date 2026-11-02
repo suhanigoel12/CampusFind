@@ -10,7 +10,7 @@
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 1. [Assignment Requirement Mapping](#-assignment-requirement-mapping)
 2. [Tech Stack & Architecture](#-tech-stack--architecture)
 3. [Folder Structure](#-folder-structure)
@@ -24,7 +24,7 @@
 
 ---
 
-## 🎯 Assignment Requirement Mapping
+## Assignment Requirement Mapping
 
 | Assignment Requirement | CampusFind Implementation | Location in Codebase |
 | :--- | :--- | :--- |
@@ -38,7 +38,7 @@
 
 ---
 
-## 🛠 Tech Stack & Architecture
+## Tech Stack & Architecture
 
 - **Runtime Environment:** [Node.js](https://nodejs.org/) (ES6+ / CommonJS)
 - **Web Framework:** [Express.js](https://expressjs.com/) (Routing, Middleware, Controllers)
@@ -74,7 +74,7 @@
 
 ---
 
-## 📁 Folder Structure
+## Folder Structure
 
 ```text
 CampusFind/
@@ -108,7 +108,7 @@ CampusFind/
 
 ---
 
-## 🚀 Step a: Project Setup & Git Configuration
+## Step a: Project Setup & Git Configuration
 
 ### 1. Initialize Project & Install Dependencies
 The project was initialized with `npm init -y` and the required packages were installed:
@@ -125,7 +125,7 @@ npm install --save-dev nodemon
 
 ---
 
-## ☁️ Step b: MongoDB Atlas Setup Guide
+## Step b: MongoDB Atlas Setup Guide
 
 To connect the application to an online MongoDB database, follow these steps:
 
@@ -177,7 +177,7 @@ To connect the application to an online MongoDB database, follow these steps:
 
 ---
 
-## 📦 Step c: Database Models
+## Step c: Database Models
 
 ### 1. User Model (`models/User.js`)
 Stores registered campus students and staff:
@@ -212,9 +212,9 @@ Represents lost or found belongings:
 
 ---
 
-## ⚡ Step d: Express APIs & CRUD Operations
+## Step d: Express APIs & CRUD Operations
 
-### 🔑 Authentication Routes (`/api/auth`)
+### Authentication Routes (`/api/auth`)
 
 | Method | Endpoint | Access | Description | Request Body |
 | :--- | :--- | :--- | :--- | :--- |
@@ -223,7 +223,7 @@ Represents lost or found belongings:
 | `GET` | `/api/auth/profile` | Private | View current user's profile | Requires `Bearer <token>` header |
 | `PUT` | `/api/auth/profile` | Private | Update user's profile info | `phone`, `department`, `name`, `password` |
 
-### 🔍 Lost & Found Item CRUD Routes (`/api/items`)
+### Lost & Found Item CRUD Routes (`/api/items`)
 
 | Method | Endpoint | Access | Description | Query / Body Parameters |
 | :--- | :--- | :--- | :--- | :--- |
@@ -238,7 +238,7 @@ Represents lost or found belongings:
 
 ---
 
-## 📬 Step e: Testing with Postman Desktop App
+## Step e: Testing with Postman Desktop App
 
 A complete, pre-configured Postman Collection is included in the [`postman/`](./postman/) directory. It contains automatic test scripts that capture the JWT token and the created item's MongoDB ID so you do not have to copy and paste IDs manually!
 
@@ -300,7 +300,7 @@ Follow this sequence to test all features:
 
 ---
 
-## 💻 Running the App Locally (3rd Evaluation Demo)
+## Running the App Locally (3rd Evaluation Demo)
 
 Follow these simple steps on your laptop to run and demonstrate the app:
 
@@ -340,9 +340,9 @@ npm start
 You will see:
 ```text
 =============================================================
- 🚀 CampusFind Server running on port 5000
- 🌐 Health Check: http://localhost:5000/api/health
- 📖 API Info:     http://localhost:5000/
+ CampusFind Server running on port 5000
+ Health Check: http://localhost:5000/api/health
+ API Info:     http://localhost:5000/
 =============================================================
 ✔ MongoDB Connected Successfully: cluster0-shard-00-00.xyzab.mongodb.net
 ```
@@ -353,7 +353,7 @@ You will see:
 
 ---
 
-## 🐙 Submitting to GitHub
+## Submitting to GitHub
 
 To push this project to your public GitHub repository:
 

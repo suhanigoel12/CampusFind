@@ -1,6 +1,6 @@
 {
   "info": {
-    "_postman_id": "c1f7b8a2-8924-4d2a-a9e6-campusfind001",
+    "_postman_id": "0ad0c60e-ba66-4910-8904-33f38894ef00",
     "name": "CampusFind API - Complete Test Suite",
     "description": "Comprehensive Postman collection for CampusFind - Campus Lost & Found System Backend.\nIncludes Authentication (Register, Login, Profile) and Item CRUD operations (Create, Read with filtering/search, Update, Resolve, Delete).",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"

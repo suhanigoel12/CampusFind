@@ -1,0 +1,455 @@
+{
+  "info": {
+    "_postman_id": "0ad0c60e-ba66-4910-8904-33f38894ef00",
+    "name": "CampusFind API - Complete Test Suite",
+    "description": "Comprehensive Postman collection for CampusFind - Campus Lost & Found System Backend.\nIncludes Authentication (Register, Login, Profile) and Item CRUD operations (Create, Read with filtering/search, Update, Resolve, Delete).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "itemId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health & Server Info",
+      "item": [
+        {
+          "name": "Welcome / Root API Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Get welcome message and available API routes."
+          },
+          "response": []
+        },
+        {
+          "name": "Server Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Check if backend server is healthy and get server uptime."
+          },
+          "response": []
+        },
+        {
+          "name": "Campus Lost & Found Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "stats"]
+            },
+            "description": "Get campus statistics: total items, lost count, found count, and resolved count."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Authentication",
+      "item": [
+        {
+          "name": "Register Student (Jane Doe)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "    console.log('Saved authToken:', response.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@campus.edu\",\n  \"password\": \"password123\",\n  \"phone\": \"+1-555-0199\",\n  \"studentId\": \"STU-2024-001\",\n  \"department\": \"Computer Science\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Register a new student account. Automatically sets authToken variable in collection."
+          },
+          "response": []
+        },
+        {
+          "name": "Login Student (Jane Doe)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.token) {",
+                  "    pm.collectionVariables.set('authToken', response.token);",
+                  "    console.log('Updated authToken:', response.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"jane.doe@campus.edu\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Log in with email and password. Returns JWT token and sets authToken variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Profile (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "description": "Fetch current logged-in user profile using Bearer token."
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Profile (Protected)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+1-555-9988\",\n  \"department\": \"Software Engineering\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "profile"]
+            },
+            "description": "Update user profile details."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Item CRUD Operations",
+      "item": [
+        {
+          "name": "Report Lost Item (HP Pavilion Laptop)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const response = pm.response.json();",
+                  "if (response.data && response.data._id) {",
+                  "    pm.collectionVariables.set('itemId', response.data._id);",
+                  "    console.log('Saved itemId:', response.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"HP Pavilion 15 Silver Laptop\",\n  \"description\": \"Silver laptop with stickers on the lid (GitHub and NASA stickers). Left on study table near the window.\",\n  \"category\": \"Electronics\",\n  \"type\": \"lost\",\n  \"location\": \"Main Library 2nd Floor Quiet Zone\",\n  \"contactInfo\": \"Call Jane at 555-0199 or email jane.doe@campus.edu\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"]
+            },
+            "description": "Report a lost item. Automatically saves the created item ID into itemId collection variable."
+          },
+          "response": []
+        },
+        {
+          "name": "Report Found Item (Campus ID Card)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Student Campus ID Card\",\n  \"description\": \"Blue lanyard with student ID card found under table 4.\",\n  \"category\": \"Cards & IDs\",\n  \"type\": \"found\",\n  \"location\": \"Campus Cafeteria Table 4\",\n  \"contactInfo\": \"Handed over to Cafeteria Lost & Found counter\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"]
+            },
+            "description": "Report a found item."
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Items (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"]
+            },
+            "description": "Get all lost and found item reports sorted by newest first."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Items by Type (Lost items only)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?type=lost",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "lost"
+                }
+              ]
+            },
+            "description": "Retrieve only lost items."
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Items by Category (Electronics)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?category=Electronics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Electronics"
+                }
+              ]
+            },
+            "description": "Retrieve only items belonging to category 'Electronics'."
+          },
+          "response": []
+        },
+        {
+          "name": "Search Items by Keyword ('laptop')",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?search=laptop",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "laptop"
+                }
+              ]
+            },
+            "description": "Search item title, description, or location using a search term."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Item by ID (Public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "{{itemId}}"]
+            },
+            "description": "Fetch details of a single item report using its MongoDB ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Reported Items (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/my-items",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "my-items"]
+            },
+            "description": "Get all items reported by the currently authenticated student."
+          },
+          "response": []
+        },
+        {
+          "name": "Update Item Details (Protected - Reporter)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"HP Pavilion 15 Silver Laptop (with Black Charger)\",\n  \"description\": \"Silver laptop with stickers on the lid (GitHub and NASA stickers). Also includes a black 65W power brick.\",\n  \"location\": \"Main Library 2nd Floor Study Room B\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "{{itemId}}"]
+            },
+            "description": "Update details of an item report. Only the original reporter or admin is authorized."
+          },
+          "response": []
+        },
+        {
+          "name": "Mark Item as Resolved / Returned (Protected)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\",\n  \"resolutionNotes\": \"Item successfully returned to owner after student ID verification at the security desk.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{itemId}}/resolve",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "{{itemId}}", "resolve"]
+            },
+            "description": "Mark an item as resolved or claimed once returned."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Item Report (Protected - Reporter)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{authToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{itemId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "items", "{{itemId}}"]
+            },
+            "description": "Delete an item report. Only the reporter or admin can delete."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
